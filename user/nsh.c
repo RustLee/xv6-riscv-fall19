@@ -3,10 +3,17 @@
 #include <kernel/fcntl.h>
 #include <user/user.h>
 
+//cat（英文全拼：concatenate）命令用于连接文件并打印到标准输出设备上
+//grep 命令用于查找文件里符合条件的字符串
+//ls（英文全拼：list files）命令用于显示指定工作目录下之内容（列出目前工作目录所含之文件及子目录)
+//echo 指令用于字符串的输出
+
+
 inline int print(int fd, char *str){
 	return write(fd, str, strlen(str));
 }
 
+//将左边的"|"换为"\0",返回字符串的其余部分或NULL
 char *simple_tok(char *p, char d){
 	while (*p != '\0' && *p != d)
 		p++;
@@ -31,6 +38,7 @@ char *trim(char *c){
 
 void redirect(int k, int pd[]){
 	close(k);
+	//dup用来复制参数oldfd所指的文件描述符
 	dup(pd[k]);
 	close(pd[0]);
 	close(pd[1]);
@@ -109,6 +117,7 @@ void handle(char *cmd){
 void handle_cmd(){
 	if (a)
 	{
+		//创建管道
 		int pd[2];
 		pipe(pd);
 		if (!fork())
@@ -129,27 +138,28 @@ void handle_cmd(){
 		}
 		close(pd[0]);
 		close(pd[1]);
-		wait();
-		wait();
+		wait(0);
+		wait(0);
 	}
-	exit();
+	exit(0);
 }
 
 int main(int argc, char const *argv[])
 {
 	while (1){
+		//"@"作为命令行输入提示符，初始化内存块
 		print(1, "@ ");
 		memset(cmd_buf, 0, 1024);
 		gets(cmd_buf, 1024);
 
 		if (cmd_buf[0] == 0)
 		{
-			exit();
+			exit(0);
 		}
 		*strchr(cmd_buf, '\n') = '\0';
 		if (fork())
 		{
-			wait();
+			wait(0);
 		}
 		else{
 			a = cmd_buf;
@@ -157,5 +167,5 @@ int main(int argc, char const *argv[])
 			handle_cmd();
 		}
 	}
-	exit();
+	exit(0);
 }
