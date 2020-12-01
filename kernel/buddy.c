@@ -15,7 +15,6 @@ static int nsizes;     // the number of entries in bd_sizes array
 #define HEAP_SIZE     BLK_SIZE(MAXSIZE) 
 #define NBLK(k)       (1 << (MAXSIZE-k))         // Number of block at size k
 #define ROUNDUP(n,sz) (((((n)-1)/(sz))+1)*(sz))  // Round up to the next multiple of sz
-#define in_range(a, b, x) (((x) >= (a)) && ((x) < (b)))
 
 typedef struct list Bd_list;
 
@@ -248,6 +247,11 @@ bd_mark(void *start, void *stop)
   }
 }
 
+
+int 
+in_range(void *left, void *right, void *addr) {
+  return ((addr>=left) && (addr<right));
+}
 // If a block is marked as allocated and the buddy is free, put the
 // buddy on the free list at size k.
 int
