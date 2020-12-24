@@ -6,6 +6,7 @@
 
 #define DIRSIZ  14
 
+//路径格式化为文件名
 char* fmt_name(char *path){
 	static char buf[DIRSIZ+1];
 	char *p;
@@ -19,6 +20,7 @@ char* fmt_name(char *path){
 	return buf;
 }
 
+//检查要查找的文件名是否与系统文件名一致
 void ep_check(char *fName,char *findName){
 	if (strcmp(fmt_name(fName),findName) == 0)
 	{
@@ -42,9 +44,11 @@ void find(char *path,char *findName){
 	char buf[512],*p;
 	struct dirent de;
 	switch(st.type){
+		//如果是文件，则与要找的文件名进行匹配
 		case T_FILE:
 			ep_check(path,findName);
 			break;
+		//如果是目录，则循环read()到dirent结构,得到其子文件/目录名，拼接得到当前路径后进入递归调用
 		case T_DIR:
 			if (strlen(path) + 1 + DIRSIZ +1 > sizeof buf)
 			{
@@ -55,6 +59,7 @@ void find(char *path,char *findName){
 			p = buf + strlen(buf);
 			*p++ = '/';
 			while(read(fd,&de,sizeof(de)) == sizeof(de)){
+				//对于子目录中的.和..不要进行递归
 				if (de.inum == 0 || de.inum == 1 || strcmp(de.name,".")==0 || strcmp(de.name,"..")==0)
 				{
 					continue;

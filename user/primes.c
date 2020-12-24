@@ -10,6 +10,7 @@ void func(int *input, int num){
 	int prime = *input;
 	int temp;
 	printf("prime %d\n", prime);
+	//递归fork进程并使用管道链接，形成一条pipeline来对素数进行过滤
 	pipe(p);
     if(fork() == 0){
         for(i = 0; i < num; i++){
@@ -19,6 +20,7 @@ void func(int *input, int num){
         exit();
     }
 	close(p[1]);
+	//每个进程收到的第一个数p一定是素数，后续的数如果能被p整除则之间丢弃，如果不能则输出到下一个进程
 	if(fork() == 0){
 		int counter = 0;
 		char buffer[4];
