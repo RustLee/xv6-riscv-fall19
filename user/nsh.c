@@ -59,6 +59,8 @@ void handle(char *cmd){
 	}
 	char *c = buf[argc];
 	int input_pos = 0, output_pos = 0;
+	//将进程的标准输入/输出 转移到打开的文件上,利用fd的顺序增长的特性，使用close()关闭标准I/O的fd
+	//open()打开目标文件，文件fd会自动替换标准I/O的fd，实现重定向
 	for (char *p = cmd; *p; p++)
 	{
 		if (*p == ' ' || *p == '\n')
